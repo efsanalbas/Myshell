@@ -13,7 +13,7 @@
 #include <unistd.h>
 
 char *arrCommand[] = {"exit","bash","execx","writef","cat","clear","ls"};
-
+void shell();
 char *myread(){
     int linesize = 200;
     char *line = malloc(sizeof(char) * linesize);
@@ -91,26 +91,41 @@ int executeCommand(char **argLine){
     if (strcmp(argLine[0], arrCommand[0]) == 0)  { //Komut dizisinin 0. elemanıyla argüman satırının 0. elemanını karşılaştırır.                                                Aynı ise 0 döner.
         return shellexit(argLine);
     }
+    else if(strcmp(argLine[0], arrCommand[1])==0){
+        if(strcmp(argLine[0], arrCommand[1])==0 ){
+            int i;
+            int f=fork();
+            if(f == 0){
+                i=execl("/usr/bin/bash", "/usr/bin/bash", "-r", "-t", "-l", (char*) 0);
+                perror("exec failed");
+            }
+            else{
+                wait(&i);//Burada wait alt sorgudan ana sorguya geri dönmemizi sağlıyor.
+            }
+        }
+        if(strcmp(argLine[0], arrCommand[0])==0){
+            shell();
+        }
+    }
     else if (strcmp(argLine[0], arrCommand[3]) == 0)  {
-      pid_t pid;
-      int i;
-      int ev;
-      pid = fork();
-      if (pid == 0) {
-
-       if(argLine[1] == NULL ){
-        printf("Missing Parameter.\n");
-       }
-        ev=execve("writef",argLine,NULL);
-        return 0;
+        pid_t pid;
+        int i;
+        int ev;
+        pid = fork();
+        if (pid == 0) {
+            if(argLine[1] == NULL ){
+                printf("Missing Parameter.\n");
+            }
+            ev=execve("writef",argLine,NULL);
+            return 0;
         }
         else if (pid < 0) {
-          perror("error");
+            perror("error");
         }
         else {
-          i = wait(&i);
+            i = wait(&i);
         }
-      return 1;
+        return 1;
     }
     else if(strcmp(argLine[0], arrCommand[4]) == 0) {
         printf("Cat: %s \n",argLine[1]);
@@ -129,14 +144,13 @@ int executeCommand(char **argLine){
             wait(&i);//Burada wait alt sorgudan ana sorguya geri dönmemizi sağlıyor.
         }
     }
-  
+    
     else {
         printf("myshell: Command not found: %s\n",argLine[0]);
     }
     return 1;
 }
-
-int main(int argc, const char * argv[]) {
+void shell(){
     
     char *command;
     char **argLine;
@@ -148,5 +162,10 @@ int main(int argc, const char * argv[]) {
         state = executeCommand(argLine);
         
     }while(state);
+}
+
+int main(int argc, const char * argv[]) {
+    shell();
     return 0;
 }
+
