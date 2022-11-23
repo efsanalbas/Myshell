@@ -15,44 +15,60 @@
 #include <sys/stat.h>
 
 void writef(char const filename[20],char *buffer){
-    FILE *in_file;
-    if(buffer == NULL){// buffer parametresi girilmediyse
-        in_file  = fopen(filename, "r");//Okunacak dosyayı bulamazsa dosya yoktur.
+    FILE *in_file ;
+    if(buffer == NULL){
+        if(in_file != NULL)
+        in_file = fopen(filename, "r");//Okunacak dosyayı bulamazsa dosya yoktur.
     }
     else{
-        
         if (in_file == NULL){
             in_file = fopen(filename, "w");//Baştan dosya oluştururum.
-            gets(buffer);
-            fprintf(in_file, "%s",buffer);
+            fprintf(in_file, "%s", buffer);
+            printf("Dosyaya yazıldı.\n");
+            fclose(in_file);
         }
         
-        
-        else{//in_file null değilse dosya vardır ve append modunda açılır.
+        else {//in_file null değilse dosya vardır ve append modunda açılır.
             FILE *in_file = fopen(filename, "a");
-            if (in_file == NULL)// Ekleme yapılmak üzere açılan in_file doğru oluşturuldumu kontrol ediyorum.
-            {
-                printf("\nUnable to open file.\n");
-                exit(0);
-            }
-            else{
-                printf("Dosya yazılmayı bekliyor.");
-                gets(buffer);
-                fprintf(in_file, "%s",buffer);
-            }
+            fprintf(in_file, "%s", buffer);
+            printf("Dosyaya yazıldı.\n");
+            fclose(in_file);
         }
-        
     }
+}
+void writef2(char const filename[20]){
+    FILE *in_file ;
+    if(in_file != NULL){
+    in_file = fopen(filename, "r");//Baştan dosya oluştururum.
     }
+    else{
+    in_file = fopen(filename, "r");
+    }
+    
+}
 
 int main(int argc, char *argv[]){
-    char *kullaniciMesaji = malloc(100 * sizeof(char*));
-    int j=0;
-    for (int i = 2; i < argc; i++){
-        kullaniciMesaji[j] = *argv[i];
-        j++;
+    if(argc <2){
+        writef2(argv[1]);
     }
-    writef(argv[1],kullaniciMesaji);
+    else{
+        char *message = malloc(sizeof(char) * 200);
+        
+        int i = 2;
+        int j = 0;
+        char *ch;
+        while(i < argc){
+            while(*(argv + i) != '\0'){
+                ch = *(argv+i);
+                for(int j=0; j<sizeof(ch)/sizeof(ch[0]); j++){
+                    message[j] = ch[j];
+                }
+                i++;
+            }
+        }
+        writef(argv[1], message);
+    }
     return 0;
 }
+
 
