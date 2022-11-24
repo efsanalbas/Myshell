@@ -1,3 +1,4 @@
+
 //
 //  main.c
 //  MyShell
@@ -107,13 +108,33 @@ int executeCommand(char **argLine){
             shell();
         }
     }
+    else if (strcmp(argLine[0], arrCommand[2]) == 0)  {
+        pid_t pid;
+        int i;
+        int ev;
+        pid = fork();
+        if (pid == 0) {
+            if(argLine[1] == NULL || argLine[2] == NULL|| argLine[3] == NULL|| argLine[4] == NULL){
+                printf("Missing Parameter.\n");
+            }
+            ev=execve("execx",argLine,NULL);
+            return 0;
+        }
+        else if (pid < 0) {
+            perror("error");
+        }
+        else {
+            i = wait(&i);
+        }
+        return 1;
+    }
     else if (strcmp(argLine[0], arrCommand[3]) == 0)  {
         pid_t pid;
         int i;
         int ev;
         pid = fork();
         if (pid == 0) {
-            if(argLine[1] == NULL ){
+            if(argLine[1] == NULL || argLine[2] == NULL){
                 printf("Missing Parameter.\n");
             }
             ev=execve("writef",argLine,NULL);
@@ -128,7 +149,8 @@ int executeCommand(char **argLine){
         return 1;
     }
     else if(strcmp(argLine[0], arrCommand[4]) == 0) {
-        printf("Cat: %s \n",argLine[1]);
+        for(int i =2 ; i< sizeof(argLine)/sizeof(char*); i++ )
+        printf("Cat: %s \n",argLine[i]);
     }
     else if(strcmp(argLine[0], arrCommand[5]) == 0) {
         system("clear");
@@ -168,4 +190,3 @@ int main(int argc, const char * argv[]) {
     shell();
     return 0;
 }
-
