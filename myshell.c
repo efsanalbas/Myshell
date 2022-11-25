@@ -1,4 +1,3 @@
-
 //
 //  main.c
 //  MyShell
@@ -101,7 +100,7 @@ int executeCommand(char **argLine){
                 perror("exec failed");
             }
             else{
-                wait(&i);//Burada wait alt sorgudan ana sorguya geri dönmemizi sağlıyor.
+               i= wait(&i);//Burada wait alt sorgudan ana sorguya geri dönmemizi sağlıyor.
             }
         }
         if(strcmp(argLine[0], arrCommand[0])==0){
@@ -111,13 +110,12 @@ int executeCommand(char **argLine){
     else if (strcmp(argLine[0], arrCommand[2]) == 0)  {
         pid_t pid;
         int i;
-        int ev;
         pid = fork();
         if (pid == 0) {
             if(argLine[1] == NULL || argLine[2] == NULL|| argLine[3] == NULL|| argLine[4] == NULL){
                 printf("Missing Parameter.\n");
             }
-            ev=execve("execx",argLine,NULL);
+            i=execve("execx",argLine,NULL);
             return 0;
         }
         else if (pid < 0) {
@@ -131,13 +129,12 @@ int executeCommand(char **argLine){
     else if (strcmp(argLine[0], arrCommand[3]) == 0)  {
         pid_t pid;
         int i;
-        int ev;
         pid = fork();
         if (pid == 0) {
             if(argLine[1] == NULL || argLine[2] == NULL){
                 printf("Missing Parameter.\n");
             }
-            ev=execve("writef",argLine,NULL);
+            i=execve("writef",argLine,NULL);
             return 0;
         }
         else if (pid < 0) {
