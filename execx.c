@@ -15,32 +15,34 @@
 
 
 int main(int argc, const char * argv[]){
-    int count=argv[2];
+    int count=atoi(argv[2]);
     char * program = argv[3];
-    char *newArgv[3];
-    newArgv[0]=argv[3];
-    newArgv[1]=argv[4];
-    newArgv[2]=argv[5];
+    char *newArgv[4];
+    newArgv[0]=program;//writef
+    newArgv[1]=argv[4];//-f
+    newArgv[2]=argv[5];//myfile
+    newArgv[3]=argv[6];//yazdırılacak mesaj
 
     for (int i=0; i<count; i++) {
         
         pid_t pid;
-        int i;
+        int k;
         int ev;
         pid = fork();
         if (pid == 0) {
             if(newArgv[0]== NULL || newArgv[1] == NULL || newArgv[2] ==NULL){
                 printf("Missing Parameter.\n");
             }
-            ev=execve(program,newArgv,NULL);
-            printf("Exec oldu.");
+            printf("Exec oldu.\n");
+            k=execve(program,newArgv,NULL);
+           
             return 0;
         }
         else if (pid < 0) {
             perror("error");
         }
         else {
-            i = wait(&i);
+        wait(&k);
         }
         return 1;
     }
