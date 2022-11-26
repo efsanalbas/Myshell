@@ -14,6 +14,7 @@
 #include <unistd.h>
 #include <sys/stat.h>
 #include <time.h>
+
 void reverse(char s[])
 {
     int i, j;
