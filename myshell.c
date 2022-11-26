@@ -146,8 +146,15 @@ int executeCommand(char **argLine){
         return 1;
     }
     else if(strcmp(argLine[0], arrCommand[4]) == 0) {
-        for(int i =2 ; i< sizeof(argLine)/sizeof(char*); i++ )
-        printf("Cat: %s \n",argLine[i]);
+      char * message =malloc(sizeof(char) * 200);
+
+          for(int i = 1; i < 10; i++) {
+              strcat(message, *argLine);
+              strcat(message, " ");
+          }
+        printf("Cat:%s\n",message);
+          
+        
     }
     else if(strcmp(argLine[0], arrCommand[5]) == 0) {
         system("clear");
