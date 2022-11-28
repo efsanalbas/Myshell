@@ -21,7 +21,7 @@ int main(int argc, const char * argv[]){
     newArgv[0]=program;//writef
     newArgv[1]=argv[4];//-f
     newArgv[2]=argv[5];//myfile
-    newArgv[3]=argv[6];//yazdırılacak mesaj
+    newArgv[3]=argv[6];//yazdirilacak mesaj
 
     for (int i=0; i<count; i++) {
         
@@ -33,9 +33,9 @@ int main(int argc, const char * argv[]){
             if(newArgv[0]== NULL || newArgv[1] == NULL || newArgv[2] ==NULL){
                 printf("Missing Parameter.\n");
             }
-            printf("Exec oldu.\n");
             k=execve(program,newArgv,NULL);
-           
+            printf("Exec oldu.\n");
+
             return 0;
         }
         else if (pid < 0) {
@@ -44,9 +44,9 @@ int main(int argc, const char * argv[]){
         else {
         wait(&k);
         }
-        return 1;
     }
     
     return 0 ;
 }
+
 
