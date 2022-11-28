@@ -26,18 +26,18 @@ char *myread(){
     
     while (true) {
         int ch = getchar();
-        if (ch == '\n' || ch == EOF) {//Okuduğumuz karakter dosya sonu yada boşluk ise,
-            line[index] = '\0';//okurken oluşturduğumuz line arrayinin ilgili indexini null yaptık.
+        if (ch == '\n' || ch == EOF) {//Okudu\u011fumuz karakter dosya sonu yada bo\u015fluk ise,
+            line[index] = '\0';//okurken olu\u015fturdu\u011fumuz line arrayinin ilgili indexini null yapt\u0131k.
             return line;
         } else {
-            line[index] = ch;//Boşluk değilse ilgili index o karaktere eşit olur.
+            line[index] = ch;//Bo\u015fluk de\u011filse ilgili index o karaktere e\u015fit olur.
         }
-        index++;//İndexi arttırarak bir sonraki line[index]'e yazmaya devam ettik.
+        index++;//\u0130ndexi artt\u0131rarak bir sonraki line[index]'e yazmaya devam ettik.
         
-        if (index >= linesize) {//Boyut aşımı yaşadıysak yani 200'den fazla karakter girdiysek yeni alan açmamız gerekir.
-            linesize += 200;//Line boyutumuzu 2 katına çıkarttık.
+        if (index >= linesize) {//Boyut a\u015f\u0131m\u0131 ya\u015fad\u0131ysak yani 200'den fazla karakter girdiysek yeni alan a\u00e7mam\u0131z gerekir.
+            linesize += 200;//Line boyutumuzu 2 kat\u0131na \u00e7\u0131kartt\u0131k.
             char *temp = realloc(line, linesize);
-            if (temp==false) {//Bu boyutu da aşarsak depolama hatası verdirdik.
+            if (temp==false) {//Bu boyutu da a\u015farsak depolama hatas\u0131 verdirdik.
                 perror("Error : You don't have enough allocation! \n");
                 exit(0);
             }
@@ -84,11 +84,11 @@ int shellexit(char **argLine){
 
 
 int executeCommand(char **argLine){
-    if(argLine[0]==NULL){//Bunu kontrol etmezsek segmentation fault alırız.
+    if(argLine[0]==NULL){//Bunu kontrol etmezsek segmentation fault al\u0131r\u0131z.
         perror("Error");
         return true;
     }
-    if (strcmp(argLine[0], arrCommand[0]) == 0)  { //Komut dizisinin 0. elemanıyla argüman satırının 0. elemanını karşılaştırır.                                                Aynı ise 0 döner.
+    if (strcmp(argLine[0], arrCommand[0]) == 0)  { //Komut dizisinin 0. eleman\u0131yla arg\u00fcman sat\u0131r\u0131n\u0131n 0. eleman\u0131n\u0131 kar\u015f\u0131la\u015ft\u0131r\u0131r.                                                Ayn\u0131 ise 0 d\u00f6ner.
         return shellexit(argLine);
     }
     else if(strcmp(argLine[0], arrCommand[1])==0){
@@ -96,11 +96,11 @@ int executeCommand(char **argLine){
             int i;
             int f=fork();
             if(f == 0){
-                i=execl("/usr/bin/bash", "/usr/bin/bash", "-r", "-t", "-l", (char*) 0);
+                i=execve("/bin/bash",argLine,NULL);
                 perror("exec failed");
             }
             else{
-               i= wait(&i);//Burada wait alt sorgudan ana sorguya geri dönmemizi sağlıyor.
+               i= wait(&i);//Burada wait alt sorgudan ana sorguya geri d\u00f6nmemizi sa\u011fl\u0131yor.
             }
         }
         if(strcmp(argLine[0], arrCommand[0])==0){
@@ -146,10 +146,10 @@ int executeCommand(char **argLine){
         return 1;
     }
     else if(strcmp(argLine[0], arrCommand[4]) == 0) {
-      char * message =malloc(sizeof(char) * 200);
+        char message[200];
 
           for(int i = 1; i < 10; i++) {
-              strcat(message, *argLine);
+               strcat(message, argLine[i]);
               strcat(message, " ");
           }
         printf("Cat:%s\n",message);
@@ -163,11 +163,11 @@ int executeCommand(char **argLine){
         int i;
         int f=fork();
         if(f == 0){
-            i=execl("/bin/ls", "/bin/ls", "-r", "-t", "-l", (char*) 0);
+            i=execl("/bin/ls",argLine,NULL);
             perror("exec failed");
         }
         else{
-            wait(&i);//Burada wait alt sorgudan ana sorguya geri dönmemizi sağlıyor.
+            wait(&i);//Burada wait alt sorgudan ana sorguya geri d\u00f6nmemizi sa\u011fl\u0131yor.
         }
     }
     
@@ -194,3 +194,4 @@ int main(int argc, const char * argv[]) {
     shell();
     return 0;
 }
+
