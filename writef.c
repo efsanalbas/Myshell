@@ -11,7 +11,6 @@
 #include <stdbool.h>
 #include <sys/wait.h>
 #include <unistd.h>
-#include <sys/stat.h>
 #include <time.h>
 
 char *convert(int number) // number stringe donusturuldu.
@@ -60,8 +59,8 @@ void writef(char const filename[20], char *buffer)
     FILE *in_file;
     if (buffer == NULL) //Kullanici dosya icine birsey yazdırmak istemesse -buffer null ise- bu kod satiri calisir.
     {
-        if (in_file != NULL)                  //dosya vardır
-            in_file = fopen(filename, "r"); // Okunacak dosyayi bulamazsa dosya yoktur.
+        if (in_file != NULL) //Dosya varsa
+            printf("The file is exist.");// Uyari mesaji yazdirdim.
         else
             in_file = fopen(filename, "w"); //dosya yoksa bastan olusturur.
     }
@@ -70,12 +69,12 @@ void writef(char const filename[20], char *buffer)
         if (in_file == NULL)    //dosya yoksa, daha onceden olusturulmadiysa
         {
             in_file = fopen(filename, "w"); // Bastan dosya olusturur.
-            writetoFile(in_file,buffer);
+            writetoFile(in_file,buffer); //buffer ve verileri icine yazar.
         }
         else
         { // in_file null degilse dosya vardır ve append modunda acilir.
             FILE *in_file = fopen(filename, "a"); //dosya varsa uzerine ekleme yapar.
-            writetoFile(in_file,buffer);
+            writetoFile(in_file,buffer); //buffer ve verileri icine yazar.
         }
     }
 }
@@ -94,4 +93,5 @@ int main(int argc, char *argv[])
 
     return 0;
 }
+
 
