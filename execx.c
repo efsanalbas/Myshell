@@ -16,10 +16,12 @@ int main(int argc, const char *argv[])
 {
     int count = atoi(argv[2]); // kac kez calistirilacagi
     char *program = argv[3];   // girilen programin adi
-    char *newArgv[3];
+    char *newArgv[4];
     newArgv[0] = program; // writef
     newArgv[1] = argv[4]; //-f
     newArgv[2] = argv[5]; // myfile
+    newArgv[3]=argv[6];//yazdırılacak mesaj
+
 
     for (int i = 0; i < count; i++)
     { // girilen artarda programin calismasi icin for dongusu olusturuldu.
@@ -34,7 +36,7 @@ int main(int argc, const char *argv[])
             }
             k = execve(program, newArgv, NULL); // execve parametre olarak girilen programa dallandi.
             printf("Exec oldu.\n");
-            perror("exec failed");
+            return 0;
         }
         else
         {
