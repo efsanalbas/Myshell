@@ -1,5 +1,5 @@
 //
-//  main.c
+//  myshell.c
 //  MyShell
 //
 //  Created by Nur Efsan Albas on 19.11.2022.
@@ -12,185 +12,208 @@
 #include <sys/wait.h>
 #include <unistd.h>
 
-char *arrCommand[] = {"exit","bash","execx","writef","cat","clear","ls"};
+char *arrCommand[] = {"exit", "bash", "execx", "writef", "cat", "clear", "ls"};
 void shell();
-char *myread(){
+char *myread()
+{ // Terminalden komutu alip okumamizi sagliyor.
     int linesize = 200;
     char *line = malloc(sizeof(char) * linesize);
     int index = 0;
-    
-    if (line == false){
+
+    if (line == false)
+    {
         perror("Error : You don't have enough allocation! \n");
         exit(0);
     }
-    
-    while (true) {
+
+    while (true)
+    {
         int ch = getchar();
-        if (ch == '\n' || ch == EOF) {//Okudu\u011fumuz karakter dosya sonu yada bo\u015fluk ise,
-            line[index] = '\0';//okurken olu\u015fturdu\u011fumuz line arrayinin ilgili indexini null yapt\u0131k.
+        if (ch == '\n' || ch == EOF)
+        {                       // okudugumuz karakter dosya sonu yada bosluk ise
+            line[index] = '\0'; // okurken olusturdugumuz line arrayinin ilgili indexini null yaptim.
             return line;
-        } else {
-            line[index] = ch;//Bo\u015fluk de\u011filse ilgili index o karaktere e\u015fit olur.
         }
-        index++;//\u0130ndexi artt\u0131rarak bir sonraki line[index]'e yazmaya devam ettik.
-        
-        if (index >= linesize) {//Boyut a\u015f\u0131m\u0131 ya\u015fad\u0131ysak yani 200'den fazla karakter girdiysek yeni alan a\u00e7mam\u0131z gerekir.
-            linesize += 200;//Line boyutumuzu 2 kat\u0131na \u00e7\u0131kartt\u0131k.
+        else
+        {
+            line[index] = ch; // Bosluk degilse ilgili index o karaktere esit olur.
+        }
+        index++; // Indexi arttirarak bir sonraki line[index]'e yazmaya devam ettim.
+
+        if (index >= linesize)
+        {                    // Boyut asimina ugradiysak yani 200'den fazla karakter girdiysek yeni alan acmamiz gerekir.
+            linesize += 200; // Line boyutumuzu 2 katina cikarttik.
             char *temp = realloc(line, linesize);
-            if (temp==false) {//Bu boyutu da a\u015farsak depolama hatas\u0131 verdirdik.
+            if (temp == false)
+            { // Bu boyutu da asarsak depolama hatasi verdirdik.
                 perror("Error : You don't have enough allocation! \n");
                 exit(0);
             }
-            temp=line;
+            temp = line;
         }
     }
 }
 
-
-char **mySplit(char *argLine){
+char **mySplit(char *argLine)
+{ // Okudugumuz girdileri arguman dizisine donusturdum.
     int linesize = 100;
     int index = 0;
-    char **tokens = malloc(linesize * sizeof(char*));
+    char **tokens = malloc(linesize * sizeof(char *)); // klavyeden okudugumuz argumanların arraya atanmis haline tokens dedim.
     char *token;
-    
-    if (!tokens){
+
+    if (!tokens)
+    {
         perror("Error");
         exit(0);
     }
-    
-    token = strtok(argLine, " \t\r\n\a");
-    while (token != NULL) {
+
+    token = strtok(argLine, " \t\r\n\a"); // Burada girilen karakterlere gore argLine'a parcalara ayirdim.
+    while (token != NULL)
+    {
         tokens[index] = token;
         index++;
-        
-        if (index >= linesize) {
+
+        if (index >= linesize)
+        { // boyut asiminda linesize'i arttirdim.
             linesize += 100;
-            tokens = realloc(tokens, 100 * sizeof(char*));
-            if (!tokens) {
+            tokens = realloc(tokens, 100 * sizeof(char *));
+            if (!tokens)
+            {
                 perror("Error");
                 exit(0);
             }
         }
-        
+
         token = strtok(NULL, " \t\r\n\a");
     }
     tokens[index] = NULL;
     return tokens;
 }
-int shellexit(char **argLine){
-    printf("Program ended.\n");
-    return 0;
-}
+int executeCommand(char **argLine)
+{ // komutlari calistiran method.
 
-
-int executeCommand(char **argLine){
-    if(argLine[0]==NULL){//Bunu kontrol etmezsek segmentation fault al\u0131r\u0131z.
+    if (argLine[0] == NULL)
+    { // ArgLine[0] NULL olup olmadigini kontrol etmezsek segmentation fault aliriz.
         perror("Error");
         return true;
     }
-    if (strcmp(argLine[0], arrCommand[0]) == 0)  { //Komut dizisinin 0. eleman\u0131yla arg\u00fcman sat\u0131r\u0131n\u0131n 0. eleman\u0131n\u0131 kar\u015f\u0131la\u015ft\u0131r\u0131r.                                                Ayn\u0131 ise 0 d\u00f6ner.
-        return shellexit(argLine);
+    if (strcmp(argLine[0], arrCommand[0]) == 0)// Komut dizisinin 0. elemaniya argLine'in 0. elemanini karsilastirdim. Ayni ise 0 doner.
+    {
+        printf("Program ended.\n");
+        return 0; //Cikis yapar
     }
-    else if(strcmp(argLine[0], arrCommand[1])==0){
-        if(strcmp(argLine[0], arrCommand[1])==0 ){
+    else if (strcmp(argLine[0], arrCommand[1]) == 0)
+    { // Bu kod satirlarinda bash komutuna gecis yaptim.
+        if (strcmp(argLine[0], arrCommand[1]) == 0)
+        {
             int i;
-            int f=fork();
-            if(f == 0){
-                i=execve("/bin/bash",argLine,NULL);
+            int f = fork();
+            if (f == 0)
+            {                                           // child process calisti
+                i = execve("/bin/bash", argLine, NULL); // bash programina execve ile dallanma yaptik.
                 perror("exec failed");
             }
-            else{
-               i= wait(&i);//Burada wait alt sorgudan ana sorguya geri d\u00f6nmemizi sa\u011fl\u0131yor.
+            else
+            {
+                wait(&i); // Burada wait alt sorgudan ana sorguya geri donmemizi sagliyor.
             }
         }
-        if(strcmp(argLine[0], arrCommand[0])==0){
-            shell();
+        if (strcmp(argLine[0], arrCommand[0]) == 0)
+        {            // bash'de exit dedigimizde
+            shell(); // myshell calismaya devam ediyor.
         }
     }
-    else if (strcmp(argLine[0], arrCommand[2]) == 0)  {
+    else if (strcmp(argLine[0], arrCommand[2]) == 0)
+    { // execx kodunu calistiran kodlar
         pid_t pid;
         int i;
         pid = fork();
-        if (pid == 0) {
-            if(argLine[1] == NULL || argLine[2] == NULL|| argLine[3] == NULL|| argLine[4] == NULL){
+        if (pid == 0)
+        { // child process calisti
+            if (argLine[1] == NULL || argLine[2] == NULL || argLine[3] == NULL || argLine[4] == NULL)
+            { // parametre eksikse hata mesaji verdirdim.
                 printf("Missing Parameter.\n");
             }
-            i=execve("execx",argLine,NULL);
-            return 0;
-        }
-        else if (pid < 0) {
-            perror("error");
-        }
-        else {
-            i = wait(&i);
-        }
-        return 1;
-    }
-    else if (strcmp(argLine[0], arrCommand[3]) == 0)  {
-        pid_t pid;
-        int i;
-        pid = fork();
-        if (pid == 0) {
-            if(argLine[1] == NULL || argLine[2] == NULL){
-                printf("Missing Parameter.\n");
-            }
-            i=execve("writef",argLine,NULL);
-            return 0;
-        }
-        else if (pid < 0) {
-            perror("error");
-        }
-        else {
-            i = wait(&i);
-        }
-        return 1;
-    }
-    else if(strcmp(argLine[0], arrCommand[4]) == 0) {
-        char message[200];
-
-          for(int i = 1; i < 10; i++) {
-               strcat(message, argLine[i]);
-              strcat(message, " ");
-          }
-        printf("Cat:%s\n",message);
-          
-        
-    }
-    else if(strcmp(argLine[0], arrCommand[5]) == 0) {
-        system("clear");
-    }
-    else if (strcmp(argLine[0], arrCommand[6]) == 0) {
-        int i;
-        int f=fork();
-        if(f == 0){
-            i=execl("/bin/ls",argLine,NULL);
+            i = execve("execx", argLine, NULL); // execx programina execve ile dallanma yaptim.
             perror("exec failed");
         }
-        else{
-            wait(&i);//Burada wait alt sorgudan ana sorguya geri d\u00f6nmemizi sa\u011fl\u0131yor.
+        else
+        {
+            wait(&i); // Burada wait alt sorgudan ana sorguya geri donmemizi sagliyor.
         }
     }
-    
-    else {
-        printf("myshell: Command not found: %s\n",argLine[0]);
+    else if (strcmp(argLine[0], arrCommand[3]) == 0)
+    { // writefi calistiran kod satirlari.
+        pid_t pid;
+        int i;
+        pid = fork();
+        if (pid == 0)
+        {
+            if (argLine[1] == NULL || argLine[2] == NULL)
+            { // burada da eksik parametre kontrolu yaptim.
+                printf("Missing Parameter.\n");
+            }
+            i = execve("writef", argLine, NULL); // execve ile writef programina dallanma yaptim
+            perror("exec failed");
+        }
+        else
+        {
+            wait(&i);
+        }
+    }
+    else if (strcmp(argLine[0], arrCommand[4]) == 0)
+    { // cat komutu.
+        int size = 200;
+        char *echo = malloc(sizeof(char) * size);   //argline dan aldigim verileri eklemek icin bir echo arrayi olusturdum.
+
+        while (*(++argLine) != NULL)    //argline null olana kadar butun degerleri aldim.
+        {
+            strcat(echo, *argLine);    //strcat ile arguman satirindaki cumleleri birlestirdim.
+            strcat(echo, " ");         //kelimeler arasında bosluk biraktim.
+        }
+        printf("Cat: %s\n", echo);     //en son ekrana yazdirdim.
+    }
+    else if (strcmp(argLine[0], arrCommand[5]) == 0)
+    { // Clear komutu
+        system("clear");
+    }
+    else if (strcmp(argLine[0], arrCommand[6]) == 0)
+    { // ls komutu
+        int i;
+        int f = fork();
+        if (f == 0)
+        {                                         // child process olustu.
+            i = execve("/bin/ls", argLine, NULL); // ls programina dallanma yaptim.
+            perror("exec failed");
+        }
+        else
+        {
+            wait(&i); // Burada wait alt sorgudan ana sorguya geri donmemizi sagliyor.
+        }
+    }
+    else
+    {
+        printf("myshell: Command not found: %s\n", argLine[0]); // komut bulunamama hatasi
     }
     return 1;
 }
-void shell(){
-    
+void shell()
+{ // shell komutu mainde cagrilan ana kod parcasi
     char *command;
     char **argLine;
     int state;
-    do{
+    do
+    {
         printf("myShell-->> ");
-        command = myread();
-        argLine = mySplit(command);
-        state = executeCommand(argLine);
-        
-    }while(state);
+        command = myread();              // komutu okudu
+        argLine = mySplit(command);      // token haline getirdi
+        state = executeCommand(argLine); // komutlari calistirdi
+
+    } while (state); // 0 dönene kadar calisti.
 }
 
-int main(int argc, const char * argv[]) {
+int main(int argc, const char *argv[])
+{
     shell();
     return 0;
 }
